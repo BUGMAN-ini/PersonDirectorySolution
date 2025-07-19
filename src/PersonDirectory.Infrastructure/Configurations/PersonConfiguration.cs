@@ -23,10 +23,10 @@
             builder.Property(p => p.DateOfBirth)
                 .IsRequired();
 
-            builder.HasOne<City>()
+            builder.HasOne(p => p.City)
                 .WithMany(c => c.Persons)
                 .HasForeignKey(p => p.CityId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(p => p.PhoneNumbers).WithOne()
                 .HasForeignKey(pn => pn.PersonId)

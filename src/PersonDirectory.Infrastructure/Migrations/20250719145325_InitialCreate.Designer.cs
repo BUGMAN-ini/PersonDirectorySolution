@@ -12,7 +12,7 @@ using PersonDirectory.Infrastructure.Data;
 namespace PersonDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250719113230_InitialCreate")]
+    [Migration("20250719145325_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -59,9 +59,6 @@ namespace PersonDirectory.Infrastructure.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CityId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -91,8 +88,6 @@ namespace PersonDirectory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
-
-                    b.HasIndex("CityId1");
 
                     b.HasIndex("PersonalNumber")
                         .IsUnique();
@@ -154,16 +149,10 @@ namespace PersonDirectory.Infrastructure.Migrations
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.Person", b =>
                 {
-                    b.HasOne("PersonDirectory.Domain.Entity.City", null)
+                    b.HasOne("PersonDirectory.Domain.Entity.City", "City")
                         .WithMany("Persons")
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PersonDirectory.Domain.Entity.City", "City")
-                        .WithMany()
-                        .HasForeignKey("CityId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("City");

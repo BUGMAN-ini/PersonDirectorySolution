@@ -37,7 +37,6 @@ namespace PersonDirectory.Infrastructure.Migrations
                     PersonalNumber = table.Column<string>(type: "nchar(11)", fixedLength: true, maxLength: 11, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CityId = table.Column<int>(type: "int", nullable: false),
-                    CityId1 = table.Column<int>(type: "int", nullable: false),
                     ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -48,13 +47,7 @@ namespace PersonDirectory.Infrastructure.Migrations
                         column: x => x.CityId,
                         principalTable: "City",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Person_City_CityId1",
-                        column: x => x.CityId1,
-                        principalTable: "City",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,11 +102,6 @@ namespace PersonDirectory.Infrastructure.Migrations
                 name: "IX_Person_CityId",
                 table: "Person",
                 column: "CityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Person_CityId1",
-                table: "Person",
-                column: "CityId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Person_PersonalNumber",
