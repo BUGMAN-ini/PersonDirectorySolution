@@ -1,0 +1,8 @@
+﻿global using Microsoft.Extensions.DependencyInjection;
+global using PersonDirectory.Application.Interfaces.Services;
+global using PersonDirectory.Application.Mapping;
+global using PersonDirectory.Application.Services;
+global using AutoMapper;
+global using PersonDirectory.Application.DTOs;
+global using PersonDirectory.Application.Interfaces.Repositories;
+global using PersonDirectory.Domain.Entity;
