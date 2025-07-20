@@ -1,54 +1,51 @@
 ﻿using AutoMapper.QueryableExtensions;
-using PersonDirectory.Application.Interfaces.Repositories;
-using PersonDirectory.Infrastructure.Repositories.Interfaces;
-using System.Linq.Expressions;
+using Microsoft.AspNetCore.Http;
 
 namespace PersonDirectory.Application.Services
 {
     public class PersonService
         (IUnitOfWork unitofwork, IMapper mapper) : IPersonService
     {
-        private readonly string _imageRoot = Path.Combine("wwwroot", "images");
+        private readonly string _imageRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
         public async Task<PersonDTO> CreatePersonAsync(CreatePersonDTO dto)
         {
             var person = mapper.Map<Person>(dto);
 
-            if (dto.PhoneNumbers is not null && dto.PhoneNumbers.Count > 0)
-                person.PhoneNumbers = mapper.Map<List<PhoneNumber>>(dto.PhoneNumbers);
-
-            if (dto.RelatedPersons is not null && dto.RelatedPersons.Count > 0)
-            {
-                person.RelatedPersons = dto.RelatedPersons.Select(r => new RelatedPerson
-                {
-                    RelationType = r.RelationType,
-                    RelatedToPersonId = r.RelatedToPersonId
-                }).ToList();
-            }
-            if (dto.ImageFile is not null && dto.ImageFile.Length > 0)
-            {
-                Directory.CreateDirectory(_imageRoot);
-
-                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(dto.ImageFile.FileName)}";
-                var fullPath = Path.Combine(_imageRoot, fileName);
-
-                await using var fs = new FileStream(fullPath, FileMode.Create);
-                await dto.ImageFile.CopyToAsync(fs);
-
-                person.ImagePath = Path.Combine("images", fileName).Replace("\\", "/");
-            }
-            else
-            {
-                person.ImagePath = "images/default.png";
-            }
-
             await unitofwork.Person.AddAsync(person);
             await unitofwork.SaveChangesAsync();
 
-            var fullPerson = await unitofwork.Person.GetByIdDetailAsync(person.Id);
+            if (dto.PhoneNumbers?.Any() == true)
+            {
+                var phones = dto.PhoneNumbers.Select(p => new PhoneNumber
+                {
+                    PersonId = person.Id,
+                    Type = p.Type,
+                    Number = p.Number
+                });
+                await unitofwork.PhoneNumber.AddRangeAsync(phones);
+            }
 
-            return mapper.Map<PersonDTO>(fullPerson);
+            if (dto.RelatedPersons?.Any() == true)
+            {
+                var rels = dto.RelatedPersons.Select(r => new RelatedPerson
+                {
+                    PersonId = person.Id,
+                    RelatedToPersonId = r.RelatedToPersonId,
+                    RelationType = r.RelationType
+                });
+                await unitofwork.RelatedPersons.AddRangeAsync(rels);
+            }
+
+            await unitofwork.SaveChangesAsync();
+
+            var full = await unitofwork.Person.GetByIdDetailAsync(person.Id);
+            var result = mapper.Map<PersonDTO>(full);
+            result.ImagePath = _imageRoot + "/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
+
+            return result;
         }
+
 
         public async Task DeletePersonAsync(int id)
         {
@@ -145,6 +142,29 @@ namespace PersonDirectory.Application.Services
             unitofwork.Person.Update(person);
             await unitofwork.SaveChangesAsync();
             return mapper.Map<PersonDTO>(person);
+        }
+
+        public async Task<PersonDTO> UploadPersonImageAsync(int personId, IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+                throw new ArgumentException("Image file is invalid");
+
+            var person = await unitofwork.Person.GetByIdAsync(personId);
+            if (person == null)
+                throw new InvalidOperationException("Person not found");
+
+            Directory.CreateDirectory(_imageRoot);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            var fullPath = Path.Combine(_imageRoot, fileName);
+
+            await using var fs = new FileStream(fullPath, FileMode.Create);
+            await imageFile.CopyToAsync(fs);
+
+            person.ImagePath = Path.Combine("images", fileName).Replace("\\", "/");
+            await unitofwork.SaveChangesAsync();
+
+            return mapper.Map<PersonDTO>(person); ;
         }
     }
 }

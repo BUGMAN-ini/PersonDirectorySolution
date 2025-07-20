@@ -12,14 +12,9 @@ namespace PersonDirectory.Infrastructure.Repositories
         {
         }
 
-        public Task<IEnumerable<RelatedPerson>> GetByPersonIdAsync(int personId)
+        public async Task AddRangeAsync(IEnumerable<RelatedPerson> relations)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveAsync(RelatedPerson entity)
-        {
-            throw new NotImplementedException();
+           await _dbSet.AddRangeAsync(relations);
         }
     }
 }

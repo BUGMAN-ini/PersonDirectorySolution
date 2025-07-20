@@ -10,7 +10,7 @@ namespace PersonDirectory.Application.DTOs
 {
     public class CreateRelatedPersonDTO
     {
-        public RelationType RelationType { get; set; }
+        public RelationType RelationType { get; set; } = RelationType.Other;
         public int RelatedToPersonId { get; set; }
     }
 }

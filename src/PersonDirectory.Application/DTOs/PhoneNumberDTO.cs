@@ -10,6 +10,6 @@ namespace PersonDirectory.Application.DTOs
     public class PhoneNumberDTO
     {
         public string Number { get; set; } = null!;
-        public PhoneNumberType Type { get; set; }
+        public PhoneNumberType Type { get; set; } = PhoneNumberType.Mobile;
     }
 }

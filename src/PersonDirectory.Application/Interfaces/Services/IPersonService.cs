@@ -1,4 +1,6 @@
-﻿namespace PersonDirectory.Application.Interfaces.Services
+﻿using Microsoft.AspNetCore.Http;
+
+namespace PersonDirectory.Application.Interfaces.Services
 {
     public interface IPersonService
     {
@@ -10,5 +12,6 @@
         Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request);
         Task<IEnumerable<RelatedPersonReportDTO>> GetRelationReportAsync();
         Task<bool> PinExistsAsync(string personalNumber);
+        Task<PersonDTO> UploadPersonImageAsync(int personId, IFormFile imageFile);
     }
 }

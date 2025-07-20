@@ -21,6 +21,8 @@
                 .ReverseMap()
                 .ForMember(r => r.Person, opt => opt.Ignore())
                 .ForMember(r => r.RelatedToPerson, opt => opt.Ignore());
+
+            CreateMap<CreateRelatedPersonDTO, RelatedPerson>().ReverseMap();
         }
     }
 }

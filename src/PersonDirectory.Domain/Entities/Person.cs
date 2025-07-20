@@ -12,7 +12,7 @@ namespace PersonDirectory.Domain.Entity
         public DateTime DateOfBirth { get; set; }
         public int CityId { get; set; }
         public City City { get; set; }
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; } = string.Empty;
 
         public ICollection<PhoneNumber> PhoneNumbers { get; set; } = new List<PhoneNumber>();
         public ICollection<RelatedPerson> RelatedPersons { get; set; } = new List<RelatedPerson>();

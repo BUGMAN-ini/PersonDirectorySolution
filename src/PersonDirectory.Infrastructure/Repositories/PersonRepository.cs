@@ -21,12 +21,13 @@ namespace PersonDirectory.Infrastructure.Repositories
 
         public async Task<Person> GetByIdDetailAsync(int id)
         {
-           return await _db.Persons
-                    .Include(p => p.City)
-                    .Include(p => p.PhoneNumbers)
-                    .Include(p => p.RelatedPersons)
-                        .ThenInclude(rp => rp.RelatedToPerson)
-                    .FirstAsync(p => p.Id == id);
+            return await _db.Set<Person>()
+                .Include(p => p.City)
+                .Include(p => p.PhoneNumbers)
+                .Include(p => p.RelatedPersons)
+                    .ThenInclude(rp => rp.RelatedToPerson)
+                .FirstOrDefaultAsync(p => p.Id == id)
+                ?? throw new KeyNotFoundException($"Person {id} not found");
         }
 
         public async Task<bool> PinExistsAsync(string personalNumber)

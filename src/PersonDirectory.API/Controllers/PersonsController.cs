@@ -12,14 +12,22 @@ namespace PersonDirectory.API.Controllers
         : ControllerBase
     {
         [HttpPost("create")]
-        public async Task<IActionResult> CreatePersonAsync([FromForm] CreatePersonDTO dto)
+        public async Task<IActionResult> Create([FromBody] CreatePersonDTO dto)
         {
             var personDto = await person.CreatePersonAsync(dto);
             return Ok(personDto);
         }
 
+        [HttpPost("upload-image")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Upload(int personId,IFormFile file)
+        {
+            var clientwithImageUrl = await person.UploadPersonImageAsync(personId, file);
+            return Ok(new { clientwithImageUrl });
+        }
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var personDto = await person.GetById(id);
             return Ok(personDto);

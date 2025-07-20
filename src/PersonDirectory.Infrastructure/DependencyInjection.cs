@@ -20,7 +20,7 @@ namespace PersonDirectory.Infrastructure
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IRelatedPersonRepository, RelatedPersonRepository>();
-
+            services.AddScoped<IPhoneNumberRepository, PhoneNumberRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
