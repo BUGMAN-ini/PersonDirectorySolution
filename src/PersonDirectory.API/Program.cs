@@ -1,6 +1,8 @@
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using PersonDirectory.API;
+using PersonDirectory.API.Middleware;
 using PersonDirectory.Application;
 using PersonDirectory.Infrastructure;
 using PersonDirectory.Infrastructure.Data;
@@ -13,31 +15,27 @@ builder.Services
     .AddApiServices(builder.Configuration);
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(opts =>
-{
-    opts.SwaggerDoc("v1", new() { Title = "PersonDirectory API", Version = "v1" });
-});
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// global exception handler → ProblemDetails JSON
+app.UseExceptionHandler(c => c.Run(async ctx =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    var err = ctx.Features.Get<IExceptionHandlerPathFeature>()?.Error;
+    ctx.Response.StatusCode = 500;
+    await ctx.Response.WriteAsJsonAsync(new
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+        title = "Server error",
+        detail = err?.Message
     });
-}
+}));
 
-app.UseApiServices();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

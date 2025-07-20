@@ -16,9 +16,11 @@ namespace PersonDirectory.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IRelatedPersonRepository, RelatedPersonRepository>();
-            services.AddScoped<ICityRepository,CityRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

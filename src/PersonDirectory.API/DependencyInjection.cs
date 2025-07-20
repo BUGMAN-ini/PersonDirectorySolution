@@ -35,8 +35,10 @@ namespace PersonDirectory.API
                 });
 
             app.UseStaticFiles();
+            app.UseMiddleware<LocalizationMiddleware>();
             app.UseExceptionHandlingMiddleware();
             app.UseLocalizationMiddleware();
+            app.UseExceptionHandler("/error");
 
             return app;
         }
