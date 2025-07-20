@@ -5,9 +5,10 @@
         public static IServiceCollection AddApplicationServices
             (this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<ICityService, CityService>();
 
             return services;
         }

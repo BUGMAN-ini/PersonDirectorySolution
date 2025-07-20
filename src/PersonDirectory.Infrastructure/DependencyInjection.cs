@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PersonDirectory.Application.Interfaces.Services;
+using PersonDirectory.Application.Services;
 using PersonDirectory.Infrastructure.Repositories;
 
 namespace PersonDirectory.Infrastructure
@@ -15,6 +17,8 @@ namespace PersonDirectory.Infrastructure
                 options.UseSqlServer(connectionString));
 
             services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<IRelatedPersonRepository, RelatedPersonRepository>();
+            services.AddScoped<ICityRepository,CityRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

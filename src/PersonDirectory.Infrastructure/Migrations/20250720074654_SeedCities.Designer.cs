@@ -12,8 +12,8 @@ using PersonDirectory.Infrastructure.Data;
 namespace PersonDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250719145325_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250720074654_SeedCities")]
+    partial class SeedCities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,27 @@ namespace PersonDirectory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("City");
+                    b.ToTable("Cities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Country = "Georgia",
+                            Name = "Tbilisi"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Country = "Georgia",
+                            Name = "Batumi"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Country = "Georgia",
+                            Name = "Kutaisi"
+                        });
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.Person", b =>
@@ -92,7 +112,7 @@ namespace PersonDirectory.Infrastructure.Migrations
                     b.HasIndex("PersonalNumber")
                         .IsUnique();
 
-                    b.ToTable("Person");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.PhoneNumber", b =>
@@ -118,7 +138,7 @@ namespace PersonDirectory.Infrastructure.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("PhoneNumber");
+                    b.ToTable("PhoneNumbers");
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.RelatedPerson", b =>
@@ -144,7 +164,7 @@ namespace PersonDirectory.Infrastructure.Migrations
 
                     b.HasIndex("RelatedToPersonId");
 
-                    b.ToTable("RelatedPerson");
+                    b.ToTable("RelatedPersons");
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.Person", b =>

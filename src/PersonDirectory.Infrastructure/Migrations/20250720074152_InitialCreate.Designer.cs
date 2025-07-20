@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonDirectory.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PersonDirectory.Infrastructure.Data;
 namespace PersonDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720074152_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,26 +46,6 @@ namespace PersonDirectory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Country = "Georgia",
-                            Name = "Tbilisi"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Country = "Georgia",
-                            Name = "Batumi"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Country = "Georgia",
-                            Name = "Kutaisi"
-                        });
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.Person", b =>

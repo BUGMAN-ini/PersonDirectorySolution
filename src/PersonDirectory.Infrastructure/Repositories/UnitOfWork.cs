@@ -1,10 +1,23 @@
 ﻿namespace PersonDirectory.Infrastructure.Repositories
 {
-    public class UnitOfWork(AppDbContext _context,IPersonRepository _person)
-        : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        public IPersonRepository Persons { get; } = _person;
+        private AppDbContext _db;
+        public IPersonRepository Person { get; private set; }
 
-        public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
+        public IRelatedPersonRepository RelatedPerson { get; private set; }
+
+        public ICityRepository City { get; private set; }
+
+        public UnitOfWork(AppDbContext db, IPersonRepository person
+            ,IRelatedPersonRepository relatedperson,ICityRepository city)
+        {
+            _db = db;
+            Person = new PersonRepository(_db);
+            RelatedPerson = new RelatedPersonRepository(_db);
+            City = new CityRepository(_db);
+        }
+
+        public async Task<int> SaveChangesAsync() => await _db.SaveChangesAsync();
     }
 }

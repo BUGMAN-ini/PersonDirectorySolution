@@ -12,7 +12,7 @@ namespace PersonDirectory.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "City",
+                name: "Cities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,11 +22,11 @@ namespace PersonDirectory.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_City", x => x.Id);
+                    table.PrimaryKey("PK_Cities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Person",
+                name: "Persons",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -41,17 +41,17 @@ namespace PersonDirectory.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Person", x => x.Id);
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Person_City_CityId",
+                        name: "FK_Persons_Cities_CityId",
                         column: x => x.CityId,
-                        principalTable: "City",
+                        principalTable: "Cities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PhoneNumber",
+                name: "PhoneNumbers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -62,17 +62,17 @@ namespace PersonDirectory.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PhoneNumber", x => x.Id);
+                    table.PrimaryKey("PK_PhoneNumbers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PhoneNumber_Person_PersonId",
+                        name: "FK_PhoneNumbers_Persons_PersonId",
                         column: x => x.PersonId,
-                        principalTable: "Person",
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RelatedPerson",
+                name: "RelatedPersons",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -83,45 +83,45 @@ namespace PersonDirectory.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RelatedPerson", x => x.Id);
+                    table.PrimaryKey("PK_RelatedPersons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RelatedPerson_Person_PersonId",
+                        name: "FK_RelatedPersons_Persons_PersonId",
                         column: x => x.PersonId,
-                        principalTable: "Person",
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RelatedPerson_Person_RelatedToPersonId",
+                        name: "FK_RelatedPersons_Persons_RelatedToPersonId",
                         column: x => x.RelatedToPersonId,
-                        principalTable: "Person",
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Person_CityId",
-                table: "Person",
+                name: "IX_Persons_CityId",
+                table: "Persons",
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Person_PersonalNumber",
-                table: "Person",
+                name: "IX_Persons_PersonalNumber",
+                table: "Persons",
                 column: "PersonalNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PhoneNumber_PersonId",
-                table: "PhoneNumber",
+                name: "IX_PhoneNumbers_PersonId",
+                table: "PhoneNumbers",
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelatedPerson_PersonId",
-                table: "RelatedPerson",
+                name: "IX_RelatedPersons_PersonId",
+                table: "RelatedPersons",
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelatedPerson_RelatedToPersonId",
-                table: "RelatedPerson",
+                name: "IX_RelatedPersons_RelatedToPersonId",
+                table: "RelatedPersons",
                 column: "RelatedToPersonId");
         }
 
@@ -129,16 +129,16 @@ namespace PersonDirectory.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PhoneNumber");
+                name: "PhoneNumbers");
 
             migrationBuilder.DropTable(
-                name: "RelatedPerson");
+                name: "RelatedPersons");
 
             migrationBuilder.DropTable(
-                name: "Person");
+                name: "Persons");
 
             migrationBuilder.DropTable(
-                name: "City");
+                name: "Cities");
         }
     }
 }

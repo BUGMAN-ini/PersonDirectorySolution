@@ -9,6 +9,6 @@ namespace PersonDirectory.Application.DTOs
     public class PhoneNumberDTO
     {
         public string Number { get; set; }
-        public string Type { get; set; }
+        public int Type { get; set; }
     }
 }

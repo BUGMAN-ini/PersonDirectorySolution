@@ -2,7 +2,10 @@
 {
     public interface IUnitOfWork
     {
-        IPersonRepository Persons { get; }
+        IPersonRepository Person { get; }
+        IRelatedPersonRepository RelatedPerson { get; }
+        ICityRepository City { get; }   
+
         Task<int> SaveChangesAsync();
     }
 }

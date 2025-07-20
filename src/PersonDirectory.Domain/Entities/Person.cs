@@ -8,7 +8,7 @@ namespace PersonDirectory.Domain.Entity
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Gender Gender { get; set; }
-        public string PersonalNumber { get; set; } = default!;
+        public string PersonalNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int CityId { get; set; }
         public City City { get; set; }
