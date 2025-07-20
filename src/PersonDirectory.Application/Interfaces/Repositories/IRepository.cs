@@ -10,5 +10,6 @@ namespace PersonDirectory.Infrastructure.Repositories.Interfaces
         Task AddAsync(T entity);
         void Remove(T entity);
         void Update(T entity);
+        IQueryable<T> Query();
     }
 }

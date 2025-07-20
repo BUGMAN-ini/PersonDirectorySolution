@@ -9,6 +9,7 @@
             CreateMap<RelatedPersonDTO, RelatedPerson>().ReverseMap();
             CreateMap<Person, PersonDTO>().ReverseMap();
             CreateMap<CityDTO, City>().ReverseMap();
+            CreateMap<UpdatePersonDTO, Person>().ReverseMap();
         }
     }
 }

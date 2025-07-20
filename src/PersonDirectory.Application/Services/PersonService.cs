@@ -1,4 +1,5 @@
-﻿using PersonDirectory.Application.Interfaces.Repositories;
+﻿using AutoMapper.QueryableExtensions;
+using PersonDirectory.Application.Interfaces.Repositories;
 using PersonDirectory.Infrastructure.Repositories.Interfaces;
 using System.Linq.Expressions;
 
@@ -28,11 +29,19 @@ namespace PersonDirectory.Application.Services
 
         }
 
-        public async Task<IEnumerable<PersonDTO>> GetAllPersonAsync()
+        public async Task<PagedResult<PersonDTO>> GetAllPersonAsync(PaginatedRequestAll request)
         {
-            var persons = await unitofwork.Person.GetAllAsync();
-            var personDTOs = mapper.Map<IEnumerable<PersonDTO>>(persons);
-            return personDTOs;
+            var query = unitofwork.Person.Query();
+            var totalcount = query.Count();
+
+            var pagedPersons = query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
+
+            var personDTOs = mapper.Map<IEnumerable<PersonDTO>>(pagedPersons);
+
+            return new PagedResult<PersonDTO>(personDTOs, totalcount);
         }
 
         public async Task<PersonDTO> GetById(int id)
@@ -46,14 +55,41 @@ namespace PersonDirectory.Application.Services
 
         }
 
-        public Task<IEnumerable<PersonDTO>> SearchAsync(string? name, string? lastName, string? personalNumber)
+        public async Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request)
         {
-            throw new NotImplementedException();
+            var query = unitofwork.Person.Query();
+
+            if (!string.IsNullOrEmpty(request.FirstName))
+                query = query.Where(p => p.FirstName.Contains(request.FirstName));
+
+            if (!string.IsNullOrEmpty(request.LastName))
+                query = query.Where(p => p.LastName.Contains(request.LastName));
+
+            if (!string.IsNullOrEmpty(request.PersonalNumber))
+                query = query.Where(p => p.PersonalNumber.Contains(request.PersonalNumber));
+
+            var totalCount = query.Count();
+
+            var pagedData = query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ProjectTo<PersonDTO>(mapper.ConfigurationProvider)
+                .ToList();
+
+            return new PagedResult<PersonDTO>(pagedData, totalCount);
         }
 
-        public Task<PersonDTO> UpdatePersonAsync(int id, UpdatePersonDTO dto)
+        public async Task<PersonDTO> UpdatePersonAsync(int id, UpdatePersonDTO dto)
         {
-            throw new NotImplementedException();
+           var person = await unitofwork.Person.GetByIdAsync(id);
+            if (person == null)
+            {
+                throw new Exception($"Person with id {id} not found.");
+            }
+            mapper.Map(dto, person);
+            unitofwork.Person.Update(person);
+            await unitofwork.SaveChangesAsync();
+            return mapper.Map<PersonDTO>(person);
         }
     }
 }

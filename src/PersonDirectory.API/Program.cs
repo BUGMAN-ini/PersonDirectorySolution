@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using PersonDirectory.API;
 using PersonDirectory.Application;
 using PersonDirectory.Infrastructure;
+using PersonDirectory.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Services.ApplyMigrations();
 
 app.UseHttpsRedirection();
 

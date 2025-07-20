@@ -23,5 +23,12 @@ namespace PersonDirectory.Infrastructure
 
             return services;
         }
+
+        public static void ApplyMigrations(this IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.Migrate();
+        }
     }
 }

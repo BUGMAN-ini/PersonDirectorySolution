@@ -62,6 +62,18 @@ namespace PersonDirectory.Infrastructure.Migrations
                             Id = 3,
                             Country = "Georgia",
                             Name = "Kutaisi"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Country = "Georgia",
+                            Name = "Rustavi"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Country = "Georgia",
+                            Name = "Zugdidi"
                         });
                 });
 
@@ -110,6 +122,63 @@ namespace PersonDirectory.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Persons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CityId = 1,
+                            DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Luka",
+                            Gender = 1,
+                            ImagePath = "C://Users/Documents/Image",
+                            LastName = "Matiashvili",
+                            PersonalNumber = "01010101010"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CityId = 2,
+                            DateOfBirth = new DateTime(1992, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Nino",
+                            Gender = 2,
+                            ImagePath = "C://Users/Documents/Image",
+                            LastName = "Beridze",
+                            PersonalNumber = "02020202020"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityId = 3,
+                            DateOfBirth = new DateTime(1993, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Giorgi",
+                            Gender = 1,
+                            ImagePath = "C://Users/Documents/Image",
+                            LastName = "Kiknavelidze",
+                            PersonalNumber = "03030303030"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CityId = 4,
+                            DateOfBirth = new DateTime(1994, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Ana",
+                            Gender = 2,
+                            ImagePath = "C://Users/Documents/Image",
+                            LastName = "Chikvaidze",
+                            PersonalNumber = "04040404040"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CityId = 5,
+                            DateOfBirth = new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Dato",
+                            Gender = 1,
+                            ImagePath = "C://Users/Documents/Image",
+                            LastName = "Gachechiladze",
+                            PersonalNumber = "05050505050"
+                        });
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.PhoneNumber", b =>
@@ -162,6 +231,43 @@ namespace PersonDirectory.Infrastructure.Migrations
                     b.HasIndex("RelatedToPersonId");
 
                     b.ToTable("RelatedPersons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            PersonId = 1,
+                            RelatedToPersonId = 2,
+                            RelationType = 5
+                        },
+                        new
+                        {
+                            Id = 2,
+                            PersonId = 1,
+                            RelatedToPersonId = 3,
+                            RelationType = 6
+                        },
+                        new
+                        {
+                            Id = 3,
+                            PersonId = 2,
+                            RelatedToPersonId = 4,
+                            RelationType = 4
+                        },
+                        new
+                        {
+                            Id = 4,
+                            PersonId = 3,
+                            RelatedToPersonId = 5,
+                            RelationType = 7
+                        },
+                        new
+                        {
+                            Id = 5,
+                            PersonId = 4,
+                            RelatedToPersonId = 1,
+                            RelationType = 5
+                        });
                 });
 
             modelBuilder.Entity("PersonDirectory.Domain.Entity.Person", b =>

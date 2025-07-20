@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace PersonDirectory.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -96,6 +98,42 @@ namespace PersonDirectory.Infrastructure.Migrations
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Cities",
+                columns: new[] { "Id", "Country", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Georgia", "Tbilisi" },
+                    { 2, "Georgia", "Batumi" },
+                    { 3, "Georgia", "Kutaisi" },
+                    { 4, "Georgia", "Rustavi" },
+                    { 5, "Georgia", "Zugdidi" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Persons",
+                columns: new[] { "Id", "CityId", "DateOfBirth", "FirstName", "Gender", "ImagePath", "LastName", "PersonalNumber" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Luka", 1, "C://Users/Documents/Image", "Matiashvili", "01010101010" },
+                    { 2, 2, new DateTime(1992, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Nino", 2, "C://Users/Documents/Image", "Beridze", "02020202020" },
+                    { 3, 3, new DateTime(1993, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "Giorgi", 1, "C://Users/Documents/Image", "Kiknavelidze", "03030303030" },
+                    { 4, 4, new DateTime(1994, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "Ana", 2, "C://Users/Documents/Image", "Chikvaidze", "04040404040" },
+                    { 5, 5, new DateTime(1995, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Dato", 1, "C://Users/Documents/Image", "Gachechiladze", "05050505050" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RelatedPersons",
+                columns: new[] { "Id", "PersonId", "RelatedToPersonId", "RelationType" },
+                values: new object[,]
+                {
+                    { 1, 1, 2, 5 },
+                    { 2, 1, 3, 6 },
+                    { 3, 2, 4, 4 },
+                    { 4, 3, 5, 7 },
+                    { 5, 4, 1, 5 }
                 });
 
             migrationBuilder.CreateIndex(
