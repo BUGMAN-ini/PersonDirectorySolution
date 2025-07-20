@@ -12,7 +12,7 @@ namespace PersonDirectory.API.Controllers
         : ControllerBase
     {
         [HttpPost("create")]
-        public async Task<IActionResult> CreatePersonAsync([FromBody] CreatePersonDTO dto)
+        public async Task<IActionResult> CreatePersonAsync([FromForm] CreatePersonDTO dto)
         {
             var personDto = await person.CreatePersonAsync(dto);
             return Ok(personDto);

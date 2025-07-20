@@ -12,7 +12,7 @@ namespace PersonDirectory.API
         { 
             services.AddHealthChecks()
                 .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
-
+            services.AddLocalization(o => o.ResourcesPath = "Resources");
             return services;
         }
 
@@ -20,14 +20,21 @@ namespace PersonDirectory.API
         {
             app.Services.ApplyMigrations();
 
-            app.UseRequestLocalization();
-            
+            app.UseRequestLocalization(opt =>
+            {
+                var cultures = new[] { "en-US", "ka-GE" };
+                opt.SetDefaultCulture("en-US")
+                   .AddSupportedCultures(cultures)
+                   .AddSupportedUICultures(cultures);
+            });
+
             app.UseHealthChecks("/health",
                 new HealthCheckOptions
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
 
+            app.UseStaticFiles();
             app.UseExceptionHandlingMiddleware();
             app.UseLocalizationMiddleware();
 

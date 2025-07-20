@@ -41,6 +41,16 @@
                 .WithOne(rp => rp.RelatedToPerson)
                 .HasForeignKey(rp => rp.RelatedToPersonId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(p => p.PhoneNumbers)
+                   .WithOne(pn => pn.Person)
+                   .HasForeignKey(pn => pn.PersonId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(p => p.RelatedPersons)
+                   .WithOne(rp => rp.Person)
+                   .HasForeignKey(rp => rp.PersonId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

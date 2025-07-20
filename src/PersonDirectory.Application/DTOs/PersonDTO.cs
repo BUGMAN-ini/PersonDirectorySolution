@@ -16,7 +16,8 @@ namespace PersonDirectory.Application.DTOs
         public Gender Gender { get; set; }
         public string PersonalNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public CityDTO City { get; set; }
+        public int CityId { get; set; }
+
         public string ImagePath { get; set; }
         public List<PhoneNumberDTO> PhoneNumbers { get; set; }
         public List<RelatedPersonDTO> RelatedPersons { get; set; }

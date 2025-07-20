@@ -19,5 +19,20 @@ namespace PersonDirectory.Infrastructure.Repositories
             .ToListAsync();
         }
 
+        public async Task<Person> GetByIdDetailAsync(int id)
+        {
+           return await _db.Persons
+                    .Include(p => p.City)
+                    .Include(p => p.PhoneNumbers)
+                    .Include(p => p.RelatedPersons)
+                        .ThenInclude(rp => rp.RelatedToPerson)
+                    .FirstAsync(p => p.Id == id);
+        }
+
+        public async Task<bool> PinExistsAsync(string personalNumber)
+        {
+            return await _db.Persons
+                .AnyAsync(p => p.PersonalNumber == personalNumber);
+        }
     }
 }

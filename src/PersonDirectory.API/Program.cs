@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using PersonDirectory.API;
 using PersonDirectory.Application;
@@ -14,7 +15,10 @@ builder.Services
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opts =>
+{
+    opts.SwaggerDoc("v1", new() { Title = "PersonDirectory API", Version = "v1" });
+});
 
 var app = builder.Build();
 
@@ -22,7 +26,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+    });
 }
 
 app.UseApiServices();

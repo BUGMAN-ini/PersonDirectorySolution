@@ -1,22 +1,20 @@
-﻿using PersonDirectory.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using PersonDirectory.Domain.Enums;
 
 namespace PersonDirectory.Application.DTOs
 {
     public class CreatePersonDTO
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public Gender Gender { get; set; }
-        public string PersonalNumber { get; set; }
+        public string PersonalNumber { get; set; } = null!;
         public DateTime DateOfBirth { get; set; }
         public int CityId { get; set; }
 
-        public List<PhoneNumberDTO> PhoneNumbers { get; set; }
-        public string? ImagePath { get; set; }
+        public List<PhoneNumberDTO>? PhoneNumbers { get; set; }
+        public List<CreateRelatedPersonDTO>? RelatedPersons { get; set; }
+
+        public IFormFile? ImageFile { get; set; }
     }
 }

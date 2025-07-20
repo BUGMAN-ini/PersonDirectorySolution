@@ -4,38 +4,40 @@ namespace PersonDirectory.Application.Validators
 {
     public class CreatePersonDTOValidator : AbstractValidator<CreatePersonDTO>
     {
-        public CreatePersonDTOValidator()
+        public CreatePersonDTOValidator(IPersonService serv)
         {
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("სახელი სავალდებულოა.")
-                .Length(2, 50)
-                .Must(BeOnlyGeorgianOrLatin).WithMessage("სახელი უნდა შეიცავდეს მხოლოდ ქართულ ან ლათინურ ანბანს.");
-
+                .NotEmpty().Length(2, 50).Must(SingleAlphabet);
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("გვარი სავალდებულოა.")
-                .Length(2, 50)
-                .Must(BeOnlyGeorgianOrLatin).WithMessage("გვარი უნდა შეიცავდეს მხოლოდ ქართულ ან ლათინურ ანბანს.");
+                .NotEmpty().Length(2, 50).Must(SingleAlphabet);
 
             RuleFor(x => x.PersonalNumber)
-                .NotEmpty()
-                .Matches(@"^\d{11}$").WithMessage("პირადი ნომერი უნდა იყოს ზუსტად 11 ციფრი.");
+                .Matches(@"^\d{11}$")
+                .MustAsync(async (pn, _) => !await serv.PinExistsAsync(pn))
+                .WithMessage("Personal number already exists.");
 
             RuleFor(x => x.DateOfBirth)
-                .Must(BeAtLeast18).WithMessage("მომხმარებელი უნდა იყოს მინიმუმ 18 წლის.");
+                .Must(d => d <= DateTime.Now.AddYears(-18))
+                .WithMessage("Must be at least 18 years old.");
 
-            RuleFor(x => x.CityId)
-                .GreaterThan(0);
+            RuleFor(x => x.CityId).GreaterThan(0);
 
-            RuleForEach(x => x.PhoneNumbers).SetValidator(new PhoneNumberValidator());
+            When(x => x.PhoneNumbers is not null, () =>
+                RuleForEach(x => x.PhoneNumbers!).SetValidator(new PhoneNumberValidator()));
+
+            RuleFor(x => x.ImageFile)
+                .Must(f => f == null || f.Length <= 1_000_000)
+                .WithMessage("Image too large (max 1 MB).")
+                .Must(f => f == null || f.ContentType.StartsWith("image/"))
+                .WithMessage("File must be an image.");
+
+            RuleFor(x => x.ImageFile)
+                .NotNull().WithMessage("Image file is required.")
+                .Must(f => f.ContentType.StartsWith("image/"))
+                .WithMessage("File must be an image.");
         }
 
-        private bool BeOnlyGeorgianOrLatin(string name)
-        {
-            var geo = @"^[ა-ჰ]+$";
-            var lat = @"^[a-zA-Z]+$";
-            return Regex.IsMatch(name, geo) || Regex.IsMatch(name, lat);
-        }
-
-        private bool BeAtLeast18(DateTime dob) => dob <= DateTime.UtcNow.AddYears(-18);
+        private bool SingleAlphabet(string s)
+            => Regex.IsMatch(s, @"^[ა-ჰ]+$") || Regex.IsMatch(s, @"^[a-zA-Z]+$");
     }
 }

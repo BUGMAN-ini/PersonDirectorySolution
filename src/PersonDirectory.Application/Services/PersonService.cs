@@ -8,13 +8,46 @@ namespace PersonDirectory.Application.Services
     public class PersonService
         (IUnitOfWork unitofwork, IMapper mapper) : IPersonService
     {
+        private readonly string _imageRoot = Path.Combine("wwwroot", "images");
+
         public async Task<PersonDTO> CreatePersonAsync(CreatePersonDTO dto)
         {
             var person = mapper.Map<Person>(dto);
-            unitofwork.Person.AddAsync(person);
-            await unitofwork.SaveChangesAsync();
-            return mapper.Map<PersonDTO>(person);
 
+            if (dto.PhoneNumbers is not null && dto.PhoneNumbers.Count > 0)
+                person.PhoneNumbers = mapper.Map<List<PhoneNumber>>(dto.PhoneNumbers);
+
+            if (dto.RelatedPersons is not null && dto.RelatedPersons.Count > 0)
+            {
+                person.RelatedPersons = dto.RelatedPersons.Select(r => new RelatedPerson
+                {
+                    RelationType = r.RelationType,
+                    RelatedToPersonId = r.RelatedToPersonId
+                }).ToList();
+            }
+            if (dto.ImageFile is not null && dto.ImageFile.Length > 0)
+            {
+                Directory.CreateDirectory(_imageRoot);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(dto.ImageFile.FileName)}";
+                var fullPath = Path.Combine(_imageRoot, fileName);
+
+                await using var fs = new FileStream(fullPath, FileMode.Create);
+                await dto.ImageFile.CopyToAsync(fs);
+
+                person.ImagePath = Path.Combine("images", fileName).Replace("\\", "/");
+            }
+            else
+            {
+                person.ImagePath = "images/default.png";
+            }
+
+            await unitofwork.Person.AddAsync(person);
+            await unitofwork.SaveChangesAsync();
+
+            var fullPerson = await unitofwork.Person.GetByIdDetailAsync(person.Id);
+
+            return mapper.Map<PersonDTO>(fullPerson);
         }
 
         public async Task DeletePersonAsync(int id)
@@ -69,6 +102,12 @@ namespace PersonDirectory.Application.Services
             });
 
             return result;
+        }
+
+        public async Task<bool> PinExistsAsync(string personalNumber)
+        {
+            if (await unitofwork.Person.PinExistsAsync(personalNumber));
+                throw new Exception($"Personal number {personalNumber} already exists.");
         }
 
         public async Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request)
