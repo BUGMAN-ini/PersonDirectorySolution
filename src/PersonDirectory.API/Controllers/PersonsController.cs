@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using PersonDirectory.Application.DTOs;
 using PersonDirectory.Application.Interfaces.Services;
 using PersonDirectory.Application.Services;
@@ -7,7 +8,7 @@ namespace PersonDirectory.API.Controllers
 {
     [Route("persons")]
     [ApiController]
-    public class PersonsController(IPersonService person)
+    public class PersonsController(IPersonService person,HealthCheckService healthCheck)
         : ControllerBase
     {
         [HttpPost("create")]
@@ -50,6 +51,32 @@ namespace PersonDirectory.API.Controllers
         {
             var updatedPerson = await person.UpdatePersonAsync(id, dto);
             return Ok(updatedPerson);
+        }
+
+        [HttpGet("relation-report")]
+        public async Task<IActionResult> GetRelationReportAsync()
+        {
+            var report = await person.GetRelationReportAsync();
+            return Ok(report);
+        }
+
+        [HttpGet("health")]
+        public async Task<IActionResult> Health()
+        {
+            var report = await healthCheck.CheckHealthAsync();
+
+            var result = new
+            {
+                status = report.Status.ToString(),
+                results = report.Entries.Select(entry => new
+                {
+                    key = entry.Key,
+                    status = entry.Value.Status.ToString(),
+                    description = entry.Value.Description
+                })
+            };
+
+            return Ok(result);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace PersonDirectory.Application.Interfaces.Repositories
 {
     public interface IPersonRepository : IRepository<Person>
     {
-        Task<Person> GetByIdDetailAsync(int id);
+        Task<List<Person>> GetAllWithRelationsAsync();
     }
 }

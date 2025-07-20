@@ -25,11 +25,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Services.ApplyMigrations();
+app.UseApiServices();
 
 app.UseHttpsRedirection();
-
-app.UseApiServices();
 
 app.UseAuthorization();
 

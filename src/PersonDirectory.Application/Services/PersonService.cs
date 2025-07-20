@@ -46,13 +46,29 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PersonDTO> GetById(int id)
         {
-            var person = await unitofwork.Person.GetByIdDetailAsync(id);
+            var person = await unitofwork.Person.GetByIdAsync(id);
             if (person == null)
             {
                 throw new Exception($"Person with id {id} not found.");
             }
             return mapper.Map<PersonDTO>(person);
 
+        }
+
+        public async Task<IEnumerable<RelatedPersonReportDTO>> GetRelationReportAsync()
+        {
+            var persons = await unitofwork.Person.GetAllWithRelationsAsync();
+
+            var result = persons.Select(p => new RelatedPersonReportDTO
+            {
+                PersonId = p.Id,
+                FullName = $"{p.FirstName} {p.LastName}",
+                RelationCounts = p.RelatedPersons
+                    .GroupBy(rp => rp.RelationType.ToString())
+                    .ToDictionary(g => g.Key, g => g.Count())
+            });
+
+            return result;
         }
 
         public async Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request)

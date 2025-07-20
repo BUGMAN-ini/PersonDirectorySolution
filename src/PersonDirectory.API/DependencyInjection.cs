@@ -1,5 +1,8 @@
 ﻿using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using PersonDirectory.API.Middleware;
+using PersonDirectory.Infrastructure;
 
 namespace PersonDirectory.API
 {
@@ -15,11 +18,18 @@ namespace PersonDirectory.API
 
         public static WebApplication UseApiServices(this WebApplication app)
         {
+            app.Services.ApplyMigrations();
+
+            app.UseRequestLocalization();
+            
             app.UseHealthChecks("/health",
                 new HealthCheckOptions
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
+
+            app.UseExceptionHandlingMiddleware();
+            app.UseLocalizationMiddleware();
 
             return app;
         }

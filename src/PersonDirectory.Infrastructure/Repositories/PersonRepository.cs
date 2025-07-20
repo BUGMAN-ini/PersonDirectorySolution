@@ -11,14 +11,13 @@ namespace PersonDirectory.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<Person> GetByIdDetailAsync(int id)
+        public async Task<List<Person>> GetAllWithRelationsAsync()
         {
             return await _db.Persons
-                .Include(p => p.City)
-                .Include(p => p.PhoneNumbers)
-                .Include(p => p.RelatedPersons)
-                    .ThenInclude(rp => rp.RelatedToPerson)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            .Include(p => p.RelatedPersons)
+            .ThenInclude(rp => rp.RelatedToPerson)
+            .ToListAsync();
         }
+
     }
 }

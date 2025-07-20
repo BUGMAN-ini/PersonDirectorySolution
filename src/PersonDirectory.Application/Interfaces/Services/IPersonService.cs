@@ -8,5 +8,6 @@
         Task<PersonDTO> GetById(int id);
         Task<PagedResult<PersonDTO>> GetAllPersonAsync(PaginatedRequestAll request);
         Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request);
+        Task<IEnumerable<RelatedPersonReportDTO>> GetRelationReportAsync();
     }
 }
