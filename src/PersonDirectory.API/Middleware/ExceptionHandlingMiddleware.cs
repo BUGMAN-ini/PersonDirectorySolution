@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using PersonDirectory.Application.Exceptions;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,25 +26,37 @@ namespace PersonDirectory.API.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception");
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                var response = new
-                {
-                    title = "Server Error",
-                    detail = ex.Message,
-                    status = context.Response.StatusCode,
-                    traceId = context.TraceIdentifier
-                };
-
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
+                await HandleExceptionAsync(context, ex, _logger);
             }
         }
-    }
 
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
+        {
+            context.Response.ContentType = "application/json";
+
+            var statusCode = exception switch
+            {
+                NotFoundException => HttpStatusCode.NotFound,
+                ArgumentException => HttpStatusCode.BadRequest,
+                _ => HttpStatusCode.InternalServerError
+            };
+
+            logger.LogError(exception, "An error occurred: {Message}", exception.Message);
+
+            var response = new
+            {
+                title = statusCode == HttpStatusCode.InternalServerError ? "Server Error" : exception.GetType().Name,
+                detail = exception.Message,
+                status = (int)statusCode,
+                traceId = context.TraceIdentifier
+            };
+
+            context.Response.StatusCode = (int)statusCode;
+
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
+        }
+    }
     public static class ExceptionHandlingMiddlewareExtensions
     {
         public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder builder)

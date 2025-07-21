@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
-using PersonDirectory.API.Shared;
+using PersonDirectory.API.Resources;
 
 namespace PersonDirectory.API.Filters
 {

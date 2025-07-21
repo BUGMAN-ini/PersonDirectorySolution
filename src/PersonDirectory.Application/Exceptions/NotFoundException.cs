@@ -15,6 +15,4 @@ namespace PersonDirectory.Application.Exceptions
         {
         }
     }
-    {
-    }
 }

@@ -6,8 +6,8 @@ using PersonDirectory.Application.Services;
 
 namespace PersonDirectory.API.Controllers
 {
-    [Route("persons")]
     [ApiController]
+    [Route("persons")]
     public class PersonsController(IPersonService person,HealthCheckService healthCheck)
         : ControllerBase
     {

@@ -9,6 +9,8 @@
 
             services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<ICityService, CityService>();
+            services.AddScoped<IPhoneNumberService, PhoneNumberService>();
+            services.AddScoped<IRelatedPersonService, RelatedPersonService>();
 
             return services;
         }

@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using FluentValidation;
+using PersonDirectory.Application.DTOs;
+using PersonDirectory.Application.Interfaces.Repositories;
+using System.Text.RegularExpressions;
 
 namespace PersonDirectory.Application.Validators
 {
@@ -9,16 +12,16 @@ namespace PersonDirectory.Application.Validators
             RuleFor(x => x.FirstName)
                 .NotEmpty().Length(2, 50)
                 .Must(text => Regex.IsMatch(text, @"^[ა-ჰ]+$") || Regex.IsMatch(text, @"^[a-zA-Z]+$"))
-                .WithMessage("First name must be Georgian OR Latin only.");
+                .WithMessage("First name must be Georgian or Latin only.");
 
             RuleFor(x => x.LastName)
                 .NotEmpty().Length(2, 50)
                 .Must(text => Regex.IsMatch(text, @"^[ა-ჰ]+$") || Regex.IsMatch(text, @"^[a-zA-Z]+$"))
-                .WithMessage("Last name must be Georgian OR Latin only.");
+                .WithMessage("Last name must be Georgian or Latin only.");
 
             RuleFor(x => x.PersonalNumber)
                 .Matches(@"^\d{11}$").WithMessage("Must be exactly 11 digits.")
-                .MustAsync(async (pn, ct) => !await repo.PinExistsAsync(pn))
+                .MustAsync(async (pn, ct) => await repo.PinExistsAsync(pn))
                 .WithMessage("Personal number already exists.");
 
             RuleFor(x => x.DateOfBirth)
@@ -26,12 +29,6 @@ namespace PersonDirectory.Application.Validators
                 .WithMessage("Person must be at least 18 years old.");
 
             RuleFor(x => x.CityId).GreaterThan(0);
-
-            RuleForEach(x => x.PhoneNumbers)
-                .SetValidator(new PhoneNumberValidator());
-
-            RuleForEach(x => x.RelatedPersons)
-                .SetValidator(new RelatedPersonValidator());
         }
     }
 }

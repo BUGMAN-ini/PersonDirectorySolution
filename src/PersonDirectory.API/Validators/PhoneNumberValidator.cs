@@ -11,10 +11,12 @@ namespace PersonDirectory.Application.Validators
         public PhoneNumberValidator()
         {
             RuleFor(x => x.Type)
-                .IsInEnum().WithMessage("ტიპი არასწორია.");
+                .IsInEnum().WithMessage("Non-Existing Type");
 
             RuleFor(x => x.Number)
-                .NotEmpty().Length(4, 50);
+                .NotEmpty()
+                .Length(4, 50)
+                .WithMessage("Number is Neccesary");
         }
     }
 }

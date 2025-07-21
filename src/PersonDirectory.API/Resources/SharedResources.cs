@@ -1,4 +1,4 @@
-﻿namespace PersonDirectory.API.Shared
+﻿namespace PersonDirectory.API.Resources
 {
     public class SharedResources
     {

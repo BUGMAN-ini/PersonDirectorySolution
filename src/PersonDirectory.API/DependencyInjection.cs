@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PersonDirectory.API.Middleware;
+using PersonDirectory.API.Resources;
+using PersonDirectory.Application.Validators;
 using PersonDirectory.Infrastructure;
 
 namespace PersonDirectory.API
@@ -12,7 +14,16 @@ namespace PersonDirectory.API
         { 
             services.AddHealthChecks()
                 .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
+
             services.AddLocalization(o => o.ResourcesPath = "Resources");
+
+            services.AddControllers()
+                .AddDataAnnotationsLocalization(options =>
+                {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                        factory.Create(typeof(SharedResources));
+                });
+            
             return services;
         }
 
@@ -27,6 +38,17 @@ namespace PersonDirectory.API
                    .AddSupportedCultures(cultures)
                    .AddSupportedUICultures(cultures);
             });
+
+            app.UseExceptionHandler(c => c.Run(async ctx =>
+            {
+                var err = ctx.Features.Get<IExceptionHandlerPathFeature>()?.Error;
+                ctx.Response.StatusCode = 500;
+                await ctx.Response.WriteAsJsonAsync(new
+                {
+                    title = "Server error",
+                    detail = err?.Message
+                });
+            }));
 
             app.UseHealthChecks("/health",
                 new HealthCheckOptions
