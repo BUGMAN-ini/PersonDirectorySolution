@@ -9,13 +9,7 @@ using PersonDirectory.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePersonDTOValidator>();
-
 builder.Services.AddFluentValidationAutoValidation();
-
-builder.Services
-    .AddApplicationServices()
-    .AddInfrastructureServices(builder.Configuration)
-    .AddApiServices(builder.Configuration);
 
 builder.Services.AddControllers()
     .AddDataAnnotationsLocalization(options =>
@@ -23,11 +17,13 @@ builder.Services.AddControllers()
         options.DataAnnotationLocalizerProvider = (type, factory) =>
             factory.Create(typeof(SharedResources));
     });
-
-builder.Services.AddValidatorsFromAssemblyContaining<CreatePersonDTOValidator>();
-builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services
+    .AddApplicationServices()
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApiServices(builder.Configuration);
 
 
 
@@ -36,6 +32,8 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseApiServices();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

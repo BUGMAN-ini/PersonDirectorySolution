@@ -12,6 +12,13 @@ namespace PersonDirectory.Application.Services
         public async Task<PersonDTO> CreatePersonAsync(CreatePersonDTO dto)
         {
             var person = mapper.Map<Person>(dto);
+            person.ImagePath = "images/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
+            if (await unitofwork.Person.PinExistsAsync(dto.PersonalNumber))
+                throw new DuplicatePersonalNumberException(dto.PersonalNumber);
+
+            var city = await unitofwork.City.GetByIdAsync(dto.CityId);
+            if (city == null)
+                throw new CityNotFoundException(dto.CityId);
 
             await unitofwork.Person.AddAsync(person);
             await unitofwork.SaveChangesAsync();
@@ -21,7 +28,6 @@ namespace PersonDirectory.Application.Services
                 throw new NotFoundException("Person not found.");
 
             var result = mapper.Map<PersonDTO>(full);
-            result.ImagePath = "images/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
 
             return result;
         }
