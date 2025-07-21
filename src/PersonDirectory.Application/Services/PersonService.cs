@@ -15,33 +15,9 @@ namespace PersonDirectory.Application.Services
             await unitofwork.Person.AddAsync(person);
             await unitofwork.SaveChangesAsync();
 
-            if (dto.PhoneNumbers?.Any() == true)
-            {
-                var phones = dto.PhoneNumbers.Select(p => new PhoneNumber
-                {
-                    PersonId = person.Id,
-                    Type = p.Type,
-                    Number = p.Number
-                });
-                await unitofwork.PhoneNumber.AddRangeAsync(phones);
-            }
-
-            if (dto.RelatedPersons?.Any() == true)
-            {
-                var rels = dto.RelatedPersons.Select(r => new RelatedPerson
-                {
-                    PersonId = person.Id,
-                    RelatedToPersonId = r.RelatedToPersonId,
-                    RelationType = r.RelationType
-                });
-                await unitofwork.RelatedPersons.AddRangeAsync(rels);
-            }
-
-            await unitofwork.SaveChangesAsync();
-
             var full = await unitofwork.Person.GetByIdDetailAsync(person.Id);
             var result = mapper.Map<PersonDTO>(full);
-            result.ImagePath = _imageRoot + "/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
+            result.ImagePath = "images/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
 
             return result;
         }

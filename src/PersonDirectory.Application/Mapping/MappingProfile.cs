@@ -23,6 +23,10 @@
                 .ForMember(r => r.RelatedToPerson, opt => opt.Ignore());
 
             CreateMap<CreateRelatedPersonDTO, RelatedPerson>().ReverseMap();
+
+            CreateMap<CreateCityDTO, City>()
+                .ForMember(c => c.Id, opt => opt.Ignore())
+                .ForMember(c => c.Persons, opt => opt.Ignore());
         }
     }
 }

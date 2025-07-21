@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersonDirectory.Application.Interfaces.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,34 +11,55 @@ namespace PersonDirectory.Application.Services
     public class CityService(IUnitOfWork unitOfWork, IMapper mapper)
         : ICityService
     {
-        public Task<CityDTO> CreateCityAsync(CityDTO dto)
+        public async Task<CityDTO> CreateCityAsync(CreateCityDTO dto)
         {
-            throw new NotImplementedException();
+            var city = mapper.Map<City>(dto);
+            await unitOfWork.City.AddAsync(city);
+            await unitOfWork.SaveChangesAsync();
+            var result = mapper.Map<CityDTO>(city); 
+            return result;
         }
 
-        public Task DeleteCityAsync(int id)
+        public async Task<string> DeleteCityAsync(int id)
         {
-            throw new NotImplementedException();
+            var city = await unitOfWork.City.GetByIdAsync(id);
+            unitOfWork.City.Remove(city);
+            await unitOfWork.SaveChangesAsync();
+            return $"City with id {id} deleted successfully.";
         }
 
-        public Task<IEnumerable<CityDTO>> GetAllCitiesAsync()
+        public async Task<PagedResult<CityDTO>> GetAllCitiesAsync(PaginatedRequestAll request)
         {
-            throw new NotImplementedException();
+            var query = unitOfWork.City.Query();
+            var totalcount = query.Count();
+
+            var pagedPersons = query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToList();
+
+            var cityDTOs = mapper.Map<IEnumerable<CityDTO>>(pagedPersons);
+
+            return new PagedResult<CityDTO>(cityDTOs, totalcount);
         }
 
-        public Task<CityDTO> GetCityByIdAsync(int id)
+        public async Task<CityDTO> GetCityByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var city = await unitOfWork.City.GetByIdAsync(id);
+            return mapper.Map<CityDTO>(city);
         }
 
-        public Task<IEnumerable<CityDTO>> SearchCitiesAsync(string? name, string? postalCode)
+        public async Task<CityDTO> UpdateCityAsync(int id, CreateCityDTO dto)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<CityDTO> UpdateCityAsync(int id, CityDTO dto)
-        {
-            throw new NotImplementedException();
+            var city = await unitOfWork.City.GetByIdAsync(id);
+            if (city == null)
+            {
+                throw new KeyNotFoundException($"City with id {id} not found.");
+            }
+            mapper.Map(dto, city);
+            unitOfWork.City.Update(city);
+            await unitOfWork.SaveChangesAsync();
+            return mapper.Map<CityDTO>(city);
         }
     }
 }

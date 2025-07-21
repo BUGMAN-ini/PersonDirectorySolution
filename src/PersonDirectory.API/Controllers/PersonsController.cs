@@ -26,7 +26,7 @@ namespace PersonDirectory.API.Controllers
             return Ok(new { clientwithImageUrl });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get-by/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var personDto = await person.GetById(id);
