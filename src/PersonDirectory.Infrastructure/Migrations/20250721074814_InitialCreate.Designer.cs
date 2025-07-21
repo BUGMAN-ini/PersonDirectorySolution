@@ -12,7 +12,7 @@ using PersonDirectory.Infrastructure.Data;
 namespace PersonDirectory.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250721072403_InitialCreate")]
+    [Migration("20250721074814_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
