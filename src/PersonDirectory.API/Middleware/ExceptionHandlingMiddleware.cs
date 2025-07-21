@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PersonDirectory.API.Middleware
@@ -8,16 +10,14 @@ namespace PersonDirectory.API.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        private readonly IHostEnvironment _env;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IHostEnvironment env)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _env = env;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
@@ -25,19 +25,21 @@ namespace PersonDirectory.API.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception occurred");
+                _logger.LogError(ex, "Unhandled exception");
 
-                context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = new
                 {
-                    Title = "Unhandled server error",
-                    Detail = _env.IsDevelopment() ? ex.Message : "Something went wrong",
-                    Status = 500
+                    title = "Server Error",
+                    detail = ex.Message,
+                    status = context.Response.StatusCode,
+                    traceId = context.TraceIdentifier
                 };
 
-                await context.Response.WriteAsJsonAsync(response);
+                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
             }
         }
     }

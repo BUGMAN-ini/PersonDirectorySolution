@@ -1,5 +1,6 @@
 ﻿using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
+using PersonDirectory.Application.Exceptions;
 
 namespace PersonDirectory.Application.Services
 {
@@ -16,6 +17,9 @@ namespace PersonDirectory.Application.Services
             await unitofwork.SaveChangesAsync();
 
             var full = await unitofwork.Person.GetByIdDetailAsync(person.Id);
+            if (full == null)
+                throw new NotFoundException("Person not found.");
+
             var result = mapper.Map<PersonDTO>(full);
             result.ImagePath = "images/" + "0f1b4ec9-a6a6-4b9e-b00e-aa3c81a04153.jpeg";
 
@@ -27,9 +31,8 @@ namespace PersonDirectory.Application.Services
         {
             var person = await unitofwork.Person.GetByIdAsync(id);
             if (person == null)
-            {
-                throw new Exception($"Person with id {id} not found.");
-            }
+                throw new NotFoundException("Person not found.");
+
             unitofwork.Person.Remove(person);
             await unitofwork.SaveChangesAsync();
 
@@ -54,9 +57,8 @@ namespace PersonDirectory.Application.Services
         {
             var person = await unitofwork.Person.GetByIdAsync(id);
             if (person == null)
-            {
-                throw new Exception($"Person with id {id} not found.");
-            }
+                throw new NotFoundException("Person not found.");
+
             return mapper.Map<PersonDTO>(person);
 
         }
@@ -80,7 +82,7 @@ namespace PersonDirectory.Application.Services
         public async Task<bool> PinExistsAsync(string personalNumber)
         {
             if (await unitofwork.Person.PinExistsAsync(personalNumber));
-                throw new Exception($"Personal number {personalNumber} already exists.");
+                throw new NotFoundException($"Personal number {personalNumber} already exists.");
         }
 
         public async Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request)
