@@ -1,4 +1,7 @@
-﻿namespace PersonDirectory.Application.Validators
+﻿using FluentValidation;
+using PersonDirectory.Application.DTOs;
+
+namespace PersonDirectory.Application.Validators
 {
     public class RelatedPersonValidator : AbstractValidator<CreateRelatedPersonDTO>
     {

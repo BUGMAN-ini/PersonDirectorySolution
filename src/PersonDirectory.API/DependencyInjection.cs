@@ -1,6 +1,8 @@
-﻿using HealthChecks.UI.Client;
+﻿using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
 using PersonDirectory.API.Middleware;
 using PersonDirectory.API.Resources;
 using PersonDirectory.Application.Validators;
@@ -16,14 +18,12 @@ namespace PersonDirectory.API
                 .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
 
             services.AddLocalization(o => o.ResourcesPath = "Resources");
+            services.PostConfigure<MvcOptions>(options =>
+            {
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+                    _ => "ველის შევსება სავალდებულოა.");
+            });
 
-            services.AddControllers()
-                .AddDataAnnotationsLocalization(options =>
-                {
-                    options.DataAnnotationLocalizerProvider = (type, factory) =>
-                        factory.Create(typeof(SharedResources));
-                });
-            
             return services;
         }
 

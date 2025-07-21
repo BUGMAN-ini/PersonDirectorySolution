@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using PersonDirectory.API;
+using PersonDirectory.API.Resources;
 using PersonDirectory.Application;
 using PersonDirectory.Application.Validators;
 using PersonDirectory.Infrastructure;
@@ -8,17 +10,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePersonDTOValidator>();
 
+builder.Services.AddFluentValidationAutoValidation();
+
 builder.Services
     .AddApplicationServices()
     .AddInfrastructureServices(builder.Configuration)
     .AddApiServices(builder.Configuration);
 
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(SharedResources));
+    });
 
-var supportedCultures = new[] { "en", "ka" };
-
-builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePersonDTOValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 var app = builder.Build();
 

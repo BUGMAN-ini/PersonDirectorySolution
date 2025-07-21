@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
+using PersonDirectory.API.Resources;
 using PersonDirectory.Application.DTOs;
 using PersonDirectory.Application.Interfaces.Repositories;
 using System.Text.RegularExpressions;
@@ -7,28 +9,45 @@ namespace PersonDirectory.Application.Validators
 {
     public class CreatePersonDTOValidator : AbstractValidator<CreatePersonDTO>
     {
-        public CreatePersonDTOValidator(IPersonRepository repo)
+        public CreatePersonDTOValidator(IPersonRepository repo, IStringLocalizer<SharedResources> localizer)
         {
             RuleFor(x => x.FirstName)
-                .NotEmpty().Length(2, 50)
-                .Must(text => Regex.IsMatch(text, @"^[ა-ჰ]+$") || Regex.IsMatch(text, @"^[a-zA-Z]+$"))
-                .WithMessage("First name must be Georgian or Latin only.");
+                .NotEmpty().WithMessage(localizer["FirstNameRequired"])
+                .Length(2, 50).WithMessage(localizer["FirstNameLength"])
+                .Must(BeOnlyGeorgianOrLatin)
+                    .WithMessage(localizer["FirstNameGeorgianOrLatin"]);
 
             RuleFor(x => x.LastName)
-                .NotEmpty().Length(2, 50)
-                .Must(text => Regex.IsMatch(text, @"^[ა-ჰ]+$") || Regex.IsMatch(text, @"^[a-zA-Z]+$"))
-                .WithMessage("Last name must be Georgian or Latin only.");
+                .NotEmpty().WithMessage(localizer["LastNameRequired"])
+                .Length(2, 50).WithMessage(localizer["LastNameLength"])
+                .Must(BeOnlyGeorgianOrLatin)
+                    .WithMessage(localizer["LastNameGeorgianOrLatin"]);
+
+            RuleFor(x => x.Gender)
+                .IsInEnum().WithMessage(localizer["GenderInvalid"]);
 
             RuleFor(x => x.PersonalNumber)
-                .Matches(@"^\d{11}$").WithMessage("Must be exactly 11 digits.")
-                .MustAsync(async (pn, ct) => await repo.PinExistsAsync(pn))
-                .WithMessage("Personal number already exists.");
+                .Matches(@"^\d{11}$")
+                .WithMessage("Must be exactly 11 digits.");
 
             RuleFor(x => x.DateOfBirth)
-                .Must(d => d <= DateTime.UtcNow.AddYears(-18))
-                .WithMessage("Person must be at least 18 years old.");
+                .NotEmpty().WithMessage(localizer["DateOfBirthRequired"])
+                .Must(BeAtLeast18).WithMessage(localizer["PersonMustBeAdult"]);
+        }
 
-            RuleFor(x => x.CityId).GreaterThan(0);
+        private bool BeOnlyGeorgianOrLatin(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+
+            var isGeorgian = Regex.IsMatch(name, @"^[ა-ჰ]+$");
+            var isLatin = Regex.IsMatch(name, @"^[a-zA-Z]+$");
+
+            return isGeorgian || isLatin;
+        }
+        private bool BeAtLeast18(DateTime birthDate)
+        {
+            return birthDate <= DateTime.Today.AddYears(-18);
         }
     }
 }
