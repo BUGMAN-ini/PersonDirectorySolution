@@ -17,7 +17,7 @@
             _db = db;
             Person = person;
             RelatedPersons = RelatedPersons;
-            City = City;
+            City = city;
             PhoneNumber = phone;
         }
 
