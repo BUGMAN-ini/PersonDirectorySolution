@@ -10,12 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePersonDTOValidator>();
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
 
 builder.Services.AddControllers()
     .AddDataAnnotationsLocalization(options =>
     {
         options.DataAnnotationLocalizerProvider = (type, factory) =>
-            factory.Create(typeof(SharedResources));
+            factory.Create(typeof(SharedResource));
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
