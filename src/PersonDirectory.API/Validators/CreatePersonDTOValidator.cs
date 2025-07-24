@@ -9,7 +9,7 @@ namespace PersonDirectory.Application.Validators
 {
     public class CreatePersonDTOValidator : AbstractValidator<CreatePersonDTO>
     {
-        public CreatePersonDTOValidator(IPersonRepository repo, IStringLocalizer<SharedResources> localizer)
+        public CreatePersonDTOValidator(IPersonRepository repo, IStringLocalizer<SharedResource> localizer)
         {
             RuleFor(x => x.FirstName)
                 .NotEmpty().WithMessage(localizer["FirstNameRequired"])

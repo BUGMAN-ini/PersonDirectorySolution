@@ -7,9 +7,9 @@ namespace PersonDirectory.API.Filters
 {
     public class ValidateModelsAttribute : ActionFilterAttribute
     {
-        private readonly IStringLocalizer<SharedResources> _localizer;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public ValidateModelsAttribute(IStringLocalizer<SharedResources> localizer)
+        public ValidateModelsAttribute(IStringLocalizer<SharedResource> localizer)
         {
             _localizer = localizer;
         }

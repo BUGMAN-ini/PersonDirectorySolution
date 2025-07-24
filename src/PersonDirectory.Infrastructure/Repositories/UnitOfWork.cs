@@ -15,10 +15,10 @@
             ,IPhoneNumberRepository phone)
         {
             _db = db;
-            Person = new PersonRepository(_db);
-            RelatedPersons = new RelatedPersonRepository(_db);
-            City = new CityRepository(_db);
-            PhoneNumber = new PhoneNumberRepository(_db);
+            Person = person;
+            RelatedPersons = RelatedPersons;
+            City = City;
+            PhoneNumber = phone;
         }
 
         public async Task<int> SaveChangesAsync() => await _db.SaveChangesAsync();
