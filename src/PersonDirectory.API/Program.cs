@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using PersonDirectory.API;
+using PersonDirectory.API.Middleware;
 using PersonDirectory.API.Resources;
 using PersonDirectory.Application;
 using PersonDirectory.Application.Validators;
@@ -33,6 +34,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseLocalizationMiddleware();
 
 app.UseApiServices();
 
