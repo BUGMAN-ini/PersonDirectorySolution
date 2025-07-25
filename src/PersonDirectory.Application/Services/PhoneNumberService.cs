@@ -25,7 +25,7 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PagedResult<PhoneNumberDTO>> GetAllAsync(PaginatedRequestAll request)
         {
-            var query = unitOfWork.PhoneNumber.Query();
+            var query = await unitOfWork.PhoneNumber.Query();
             var totalCount = query.Count();
 
             var pagedNumbers = query

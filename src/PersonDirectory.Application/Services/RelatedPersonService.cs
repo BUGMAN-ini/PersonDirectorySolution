@@ -33,7 +33,7 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PagedResult<RelatedPersonDTO>> GetAllRelationsAsync(PaginatedRequestAll request)
         {
-            var query = unitOfWork.RelatedPersons.Query();
+            var query = await unitOfWork.RelatedPersons.Query();
             var totalCount = query.Count();
 
             var pagedRelations = query

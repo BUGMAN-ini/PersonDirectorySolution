@@ -46,7 +46,7 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PagedResult<PersonDTO>> GetAllPersonAsync(PaginatedRequestAll request)
         {
-            var query = unitofwork.Person.Query();
+            var query = await unitofwork.Person.Query();
             var totalcount = query.Count();
 
             var pagedPersons = query
@@ -93,7 +93,7 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PagedResult<PersonDTO>> SearchAsync(PersonSearchRequestDTO request)
         {
-            var query = unitofwork.Person.Query();
+            var query = await unitofwork.Person.Query();
 
             if (!string.IsNullOrEmpty(request.FirstName))
                 query = query.Where(p => p.FirstName.Contains(request.FirstName));

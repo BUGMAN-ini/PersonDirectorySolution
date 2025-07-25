@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PersonDirectory.Infrastructure.Configurations
+﻿namespace PersonDirectory.Infrastructure.Configurations
 {
     public class RelatedPersonconfiguration : IEntityTypeConfiguration<RelatedPerson>
     {

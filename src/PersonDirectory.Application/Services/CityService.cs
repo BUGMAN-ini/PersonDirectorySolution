@@ -30,7 +30,7 @@ namespace PersonDirectory.Application.Services
 
         public async Task<PagedResult<CityDTO>> GetAllCitiesAsync(PaginatedRequestAll request)
         {
-            var query = unitOfWork.City.Query();
+            var query = await unitOfWork.City.Query();
             var totalcount = query.Count();
 
             var pagedPersons = query

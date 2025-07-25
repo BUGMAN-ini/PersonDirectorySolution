@@ -20,7 +20,7 @@ namespace PersonDirectory.Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
-        public IQueryable<T> Query()
+        public async Task<IQueryable<T>> Query()
         {
             return _dbSet.AsQueryable().AsNoTracking();
         }

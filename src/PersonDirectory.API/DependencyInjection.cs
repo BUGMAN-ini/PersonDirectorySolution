@@ -15,7 +15,7 @@ namespace PersonDirectory.API
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
         { 
             services.AddHealthChecks()
-                .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                .AddSqlServer(configuration.GetConnectionString("DefaultConnection")!);
 
             services.AddLocalization(o => o.ResourcesPath = "Resources");
             services.PostConfigure<MvcOptions>(options =>
